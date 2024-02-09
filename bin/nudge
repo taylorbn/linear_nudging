@@ -1,0 +1,58 @@
+#!/usr/bin/python
+
+import click
+import numpy as np 
+from src.simulation import Simulation
+
+@click.command()
+@click.argument("which", type=click.Choice(["diagonal","off-diagonal"]))
+@click.option("--trace", type=int, default=None, help="Trace of the system parameter matrix")
+@click.option("--det", type=int, default=None, help="Determinant of the system parameter matrix")
+@click.option("--delta", type=int, default=None, help="A[0,0]")
+@click.option("--alpha", type=int, default=None, help="A[0,1]")
+@click.option("--beta", type=int, default=None, help="A[1,0]")
+@click.option("--gamma", type=int, default=None, help="A[1,1]")
+@click.option("--mu", type=int, default=800, help="Nudging parameter")
+@click.option("--relax", type=int, default=4, help="Relaxation time before updating parameter guesses")
+def nudge(which, trace, det, delta, alpha, beta, gamma, mu, relax):
+
+    if which == "diagonal":
+        parms_to_update = np.array([False, False, True, True])
+    elif which == "off-diagonal":
+        parms_to_update = np.array([True, True, False, False])
+    else:
+        raise ValueError("Can only estimate diagonal or off-diagonal entries")
+    
+    if not(trace is None or det is None):
+        print("Using provided trace and determinant to generate parameter matrix.")
+        print(f"Trace: {trace}")
+        print(f"Determinant: {det}")
+        kwargs = {
+            "trace": trace,
+            "det": det,
+            "mu": mu,
+            "relax": relax,
+            "updates":parms_to_update,
+        }
+    else:
+        if any(val is None for val in [delta, alpha, beta, gamma]):
+            raise ValueError(f"Insufficient parameters provided")
+        else:
+            params = [[delta, alpha],
+                      [beta, gamma]]
+            print(f"Using provided parameter matrix:\n {np.matrix(params)}")
+        kwargs = {
+            "alpha": alpha,
+            "beta": beta,
+            "delta": delta,
+            "gamma": gamma,
+            "mu": mu,
+            "relax": relax,
+            "updates": parms_to_update,
+        }
+
+    sim = Simulation(**kwargs)
+    sim.run()
+
+if __name__ == "__main__":
+    nudge()
