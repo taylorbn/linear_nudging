@@ -4,18 +4,6 @@ This code implements a nudging algorithm to recover the parameters of a two-dime
 
 These are preliminary numerical experiments for a research project performed in 2021 under [Dr. Vincent R Martinez](http://math.hunter.cuny.edu/vmartine/) in the Department of Mathematics and Statistics at Hunter College, City University of New York
 
-### Platform information
-
-**Platform:** osx-64
-
-**Python:** 3.8.8
-
-**Numpy:** 1.20.1
-
-**Scipy:** 1.6.2
-
-**Matplotlib:** 3.3.4
-
 ### Installation
 
 To create the appropriate virtual environment, run
